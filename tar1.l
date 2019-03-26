@@ -40,9 +40,9 @@ public vmToAsm(vmFileName){
         while (reader.Available)
         {
            string vmCommand := reader.readLine();
-           var asmsCommandsInOneLine := getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNameWithoutPathAndWithoutEnd,indexCommand);
+           var asmsCommandsInOneLine := getAsmCommandsFitToVmCommand(vmCommand,vmToAsmArray,fileNameWithoutPathAndWithoutEnd,indexCommand);//
            writeAsmsCommandsToFile(fileAsmName,asmsCommandsInOneLine);           
-           indexCommand := indexCommand + 1;
+           indexCommand := indexCommand + 1;//indexCommand using for labels to prevent duplicate
         }
                    
     }; 
@@ -64,7 +64,7 @@ fileVmAsmToArray(fileName){
      ^dynamicArray;
 }
 
-public getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNameOnly,indexCommand){
+public getAsmCommandsFitToVmCommand(vmCommand,vmToAsmArray,fileNameOnly,indexCommand){
       string vmCommandFixedNewLine:= giveVmCommandWitoutNewLineProblem(vmCommand);
       if(stringIsCommand(vmCommandFixedNewLine)){
         auto it := vmToAsmArray.enumerator(); // initializing an enumerator
@@ -81,9 +81,9 @@ public getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNa
                asmCommandsLineAsmFixed := addAsmCommandsOutPutIfNeed(asmCommandsInConvertFileInCorrentLine,vmCommandFixedNewLine,fileNameOnly);////for example if push arguments 10 put 10 to the current asm commands
                vmCommandFixedNewLine := fixedVmThreeWord(vmCommandFixedNewLine);//for example if push arguments 10 delete 10 to compare below.
               };  
-             if(vmCommandInConvertFileInCorrentLine == vmCommandFixedNewLine)
+             if(vmCommandInConvertFileInCorrentLine == vmCommandFixedNewLine)//check if vmCommand from vmCommands file is eqaul to vmCommand in the convert file.
              {
-               asmCommandsLineAsmFixed := putCommandIndex(indexCommand,asmCommandsLineAsmFixed);
+               asmCommandsLineAsmFixed := putCommandIndex(indexCommand,asmCommandsLineAsmFixed);//I put index in every label
               ^asmCommandsLineAsmFixed;
              };
      };
