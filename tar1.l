@@ -19,7 +19,7 @@ dir.Value := getDir();
 public program()    
 {
 var fileName := retFileName();
-setGlobalDir();
+setGlobalDir();// get dir name
 vmToAsm(fileName);
 
  
@@ -34,14 +34,14 @@ public vmToAsm(vmFileName){
      var fileNameVmToAsmConverter := dir.Value+"\vmToAsmOne.txt";
     var vmToAsmArray := fileVmAsmToArray(fileNameVmToAsmConverter);
     var indexCommand :=0;
-    using(auto reader := File.assign(vmFileName).textreader())//loop in vmFile
+    using(auto reader := File.assign(vmFileName).textreader())//using for read in vmFile
     {
           // repeating until all the lines are read 
-        while (reader.Available)
+        while (reader.Available)//loop in vmFile
         {
-           string vmCommand := reader.readLine();
-           var asmsCommandsInOneLine := getAsmCommandsFitToVmCommand(vmCommand,vmToAsmArray,fileNameWithoutPathAndWithoutEnd,indexCommand);//
-           writeAsmsCommandsToFile(fileAsmName,asmsCommandsInOneLine);           
+           string vmCommand := reader.readLine();//current vm command
+           var asmsCommandsInOneLine := getAsmCommandsFitToVmCommand(vmCommand,vmToAsmArray,fileNameWithoutPathAndWithoutEnd,indexCommand);//the asm comands that fit to the current vm command
+           writeAsmsCommandsToFile(fileAsmName,asmsCommandsInOneLine);//write the asms commands to asm file           
            indexCommand := indexCommand + 1;//indexCommand using for labels to prevent duplicate
         }
                    
@@ -71,13 +71,14 @@ public getAsmCommandsFitToVmCommand(vmCommand,vmToAsmArray,fileNameOnly,indexCom
         while (it.next()) // going through each member
         {
    
-          string correntCommandFromFileConvert := it.get(); // getting the current enumeration item
+          string correntCommandFromFileConvert := it.get(); // getting the current enumeration item 
        vmCommandFixedNewLine:= giveVmCommandWitoutNewLineProblem(vmCommand);
-            var arrayOfTheConvertFile:= getArrayFromStringWithPartition(correntCommandFromFileConvert,"%");
+            var arrayOfTheConvertFile:= getArrayFromStringWithPartition(correntCommandFromFileConvert,"%");//taking the vm command with its asm commands and get the first place in the array the vm command and the second place the asm commands
             var vmCommandInConvertFileInCorrentLine := arrayOfTheConvertFile[0].toString();
             var asmCommandsInConvertFileInCorrentLine := arrayOfTheConvertFile[1].toString();
             string asmCommandsLineAsmFixed :=asmCommandsInConvertFileInCorrentLine; //if not need fixed
-             if(ifVmCommandIsBiggerThanOneWord(vmCommandInConvertFileInCorrentLine)){
+             if(ifVmCommandIsBiggerThanOneWord(vmCommandInConvertFileInCorrentLine))//check if the command is depents in the input like pop arguments 1 that depends on 1 and this when the word bigger than one word
+                 {
                asmCommandsLineAsmFixed := addAsmCommandsOutPutIfNeed(asmCommandsInConvertFileInCorrentLine,vmCommandFixedNewLine,fileNameOnly);////for example if push arguments 10 put 10 to the current asm commands
                vmCommandFixedNewLine := fixedVmThreeWord(vmCommandFixedNewLine);//for example if push arguments 10 delete 10 to compare below.
               };  
