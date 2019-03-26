@@ -1,0 +1,26 @@
+eq%@SP^A=M-1^D=M^A=A-1^D=D-M^@TRUECASEEQ$i^D;JEQ^D=0^@SP^A=M-1^A=A-1^M=D^@FALSECASEEQ$i^0;JMP^(TRUECASEEQ$i)^D=-1^@SP^A=M-1^A=A-1^M=D^(FALSECASEEQ$i)^@SP^M=M-1
+gt%@SP^A=M-1^D=M^A=A-1^D=D-M^@TRUECASEGT$i^D;JLT^D=0^@SP^A=M-1^A=A-1^M=D^@FALSECASEGT$i^0;JMP^(TRUECASEGT$i)^D=-1^@SP^A=M-1^A=A-1^M=D^(FALSECASEGT$i)^@SP^M=M-1
+lt%@SP^A=M-1^D=M^A=A-1^D=D-M^@TRUECASELT$i^D;JGT^D=0^@SP^A=M-1^A=A-1^M=D^@FALSECASELT$i^0;JMP^(TRUECASELT$i)^D=-1^@SP^A=M-1^A=A-1^M=D^(FALSECASELT$i)^@SP^M=M-1
+add%@SP^M=M-1^A=M^D=M^A=A-1^M=M+D
+sub%@SP^M=M-1^A=M^D=M^A=A-1^M=M-D
+neg%@SP^A=M-1^M=-M
+not%@SP^A=M-1^M=!M
+or%@SP^A=M-1^D=M^A=A-1^M=D|M^@SP^M=M-1
+and%@SP^A=M-1^D=M^A=A-1^M=D&M^@SP^M=M-1
+push constant%@x^D=A^@SP^M=M+1^A=M-1^M=D
+push local%@LCL^D=M^@x^A=D+A^D=M^@SP^M=M+1^A=M-1^M=D
+pop local%@LCL^D=M^@x^D=D+A^@SP^M=M-1^A=M+1^M=D^A=A-1^D=M^A=A+1^A=M^M=D
+push argument%@ARG^D=M^@x^A=D+A^D=M^@SP^M=M+1^A=M-1^M=D
+pop argument%@ARG^D=M^@x^D=D+A^@SP^M=M-1^A=M+1^M=D^A=A-1^D=M^A=A+1^A=M^M=D
+push this%@THIS^D=M^@x^A=D+A^D=M^@SP^M=M+1^A=M-1^M=D
+pop this%@THIS^D=M^@x^D=D+A^@SP^M=M-1^A=M+1^M=D^A=A-1^D=M^A=A+1^A=M^M=D
+push that%@THAT^D=M^@x^A=D+A^D=M^@SP^M=M+1^A=M-1^M=D
+pop that%@THAT^D=M^@x^D=D+A^@SP^M=M-1^A=M+1^M=D^A=A-1^D=M^A=A+1^A=M^M=D
+push temp%@5^D=A^@x^A=D+A^D=M^@SP^M=M+1^A=M-1^M=D
+pop temp%@5^D=A^@x^D=D+A^@SP^M=M-1^A=M+1^M=D^A=A-1^D=M^A=A+1^A=M^M=D
+push pointer 1%@THAT^D=M^@SP^A=M^M=D^@SP^M=M+1
+pop pointer 1%@SP^A=M-1^D=M^@THAT^M=D^@SP^M=M-1
+push pointer 0%@THIS^D=M^@SP^A=M^M=D^@SP^M=M+1
+pop pointer 0%@SP^A=M-1^D=M^@THIS^M=D^@SP^M=M-1
+pop static%@SP^A=M-1^D=M^@$C.x^M=D^@SP^M=M-1
+push static%@$C.x^D=M^@SP^A=M^M=D^@SP^M=M+1

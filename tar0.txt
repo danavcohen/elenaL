@@ -1,0 +1,145 @@
+import system'io;
+import extensions;
+import extensions'text;
+import system'routines;
+import extensions'routines;
+ 
+public program()    
+{
+
+//    funcB();
+//    funcC();
+funcD();
+          //read();
+//      test();
+           // test2();
+           testString();
+      //console.printLine("dfdf");                           
+        console.readChar();
+
+       
+      
+}
+public testString(){
+    var str:="abc def hhh";
+    var array:= str.splitBy(" ");
+     array.forEach:(item){
+         console.printLine(item);}
+}
+public test2(){
+
+    var s := "Hello";
+    if("H" == s[0].toString()){
+    console.printLine("yes");
+    }     
+           
+                  
+}
+public areCompare(var line){
+                if(line[0].toString()=="a" && line[1].toString()=="r"&& line[2].toString() =="e") 
+            //if(line[0].toString()=="A" &&line[1].toString()=="B")
+            {
+             console.printLine(line);
+             }
+
+    }
+public youCompare(var line){
+                 if(line[0].toString()=="y" && line[1].toString()=="o" && line[2].toString() =="u")
+            {
+             console.printLine(line);
+             }                
+    }
+public compareToDandPrint(var line){
+    youCompare(line);
+    areCompare(line);
+}
+public funcD(){
+var file := "C:\Dan\studies programs\elena\elena-4.0.2c.i386-win\tar\tar0all\dir\hello.vm";  
+
+//console writeLine(file Substring:"0" at:"3");
+
+    using(auto reader := File.assign(file).textreader())
+    {
+        
+          // repeating until all the lines are read 
+        while (reader.Available)
+        {
+            // read the line
+            var line := reader.readLine();
+            compareToDandPrint(line);
+            
+        }
+           
+    }   
+ 
+   }
+
+public funcC(){
+var file := "C:\Dan\studies programs\elena\elena-4.0.2c.i386-win\tar\tar0all\dir\hello.vm";  
+var newFile :="C:\Dan\studies programs\elena\elena-4.0.2c.i386-win\tar\tar0all\dir\hello.asm";
+//console writeLine(file Substring:"0" at:"3");
+
+    using(auto reader := File.assign(file).textreader())
+    {
+        
+                auto writer := File.assign(newFile).textwriter();
+          // repeating until all the lines are read 
+        while (reader.Available)
+        {
+            // read the line
+            string line := reader.readLine();
+            
+            // print the line
+            writer.writeLine(line);
+        }
+           
+    }   
+ 
+   }
+
+public read(){
+         var dir := Directory.assign("C:\Dan\studies programs\elena\elena-4.0.2c.i386-win\tar\tar0\dir");
+   dir.getFiles("*.vm").forEach:(item)
+   {
+    using(auto reader := File.assign(item).textreader())
+    {
+          // repeating until all the lines are read 
+        while (reader.Available)
+        {
+            // read the line
+            string line := reader.readLine();
+            
+            // print the line
+            console.printLine(line);            
+        }
+           
+    }   
+ 
+   }
+    }
+public funcB(){
+    
+    // getting a file name from the command line argument
+   // var fileName := program_arguments[1];
+  
+    // opening a text file reader
+var i:=0;
+    var dir := Directory.assign("C:\Dan\studies programs\elena\elena-4.0.2c.i386-win\tar\tar0\dir");
+   dir.getFiles("*.vm").forEach:(item)
+   {
+    using(auto writer := File.assign(item).logger())
+    {
+        i+=1;
+        // repeating until the empty line is entered
+       
+            // save to the file 
+            writer.writeLine(i);
+       
+    
+        
+    }   
+   
+   }
+       
+   
+    }

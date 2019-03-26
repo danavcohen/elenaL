@@ -4,34 +4,45 @@ import extensions'text;
 import system'routines;
 import extensions'routines;
 
+
+static dir = new Variable();
+ 
+
 public print(str){
 console.printLine(str);
 }
 
-
+setGlobalDir(){
+dir.Value := getDir();
+}
 
 public program()    
 {
 var fileName := retFileName();
+setGlobalDir();
 vmToAsm(fileName);
 
+ 
  console.readChar();
 }
 
 
 public vmToAsm(vmFileName){
+
     var fileAsmName := newFileAsmName(vmFileName);
-    var fileNameWithoutPathAndWithoutEnd   := getFileNameOnly(vmFileName);
-     var fileNameVmToAsmConverter := "C:\Dan\studies programs\elena\elena-4.0.2e.i386-win\tar\tar1\dir\vmToAsmOne.txt";
+    var fileNameWithoutPathAndWithoutEnd := getFileNameOnly(vmFileName);
+     var fileNameVmToAsmConverter := dir.Value+"\vmToAsmOne.txt";
     var vmToAsmArray := fileVmAsmToArray(fileNameVmToAsmConverter);
+    var indexCommand :=0;
     using(auto reader := File.assign(vmFileName).textreader())
     {
           // repeating until all the lines are read 
         while (reader.Available)
         {
            string vmCommand := reader.readLine();
-           var asmsCommandsInOneLine := getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNameWithoutPathAndWithoutEnd);
+           var asmsCommandsInOneLine := getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNameWithoutPathAndWithoutEnd,indexCommand);
            writeAsmsCommandsToFile(fileAsmName,asmsCommandsInOneLine);           
+           indexCommand := indexCommand + 1;
         }
                    
     }; 
@@ -53,16 +64,15 @@ fileVmAsmToArray(fileName){
      ^dynamicArray;
 }
 
-
-public getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNameOnly){
+public getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNameOnly,indexCommand){
       string vmCommandFixedNewLine:= giveVmCommandWitoutNewLineProblem(vmCommand);
-      if(stringNotEmpty(vmCommandFixedNewLine)){
+      if(stringIsCommand(vmCommandFixedNewLine)){
         auto it := vmToAsmArray.enumerator(); // initializing an enumerator
         while (it.next()) // going through each member
         {
    
           string correntCommandFromFileConvert := it.get(); // getting the current enumeration item
-       
+       vmCommandFixedNewLine:= giveVmCommandWitoutNewLineProblem(vmCommand);
             var arrayOfTheConvertFile:= getArrayFromStringWithPartition(correntCommandFromFileConvert,"%");
             var vmCommandInConvertFileInCorrentLine := arrayOfTheConvertFile[0].toString();
             var asmCommandsInConvertFileInCorrentLine := arrayOfTheConvertFile[1].toString();
@@ -73,7 +83,7 @@ public getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNa
               };  
              if(vmCommandInConvertFileInCorrentLine == vmCommandFixedNewLine)
              {
-              
+               asmCommandsLineAsmFixed := putCommandIndex(indexCommand,asmCommandsLineAsmFixed);
               ^asmCommandsLineAsmFixed;
              };
      };
@@ -81,7 +91,23 @@ public getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNa
      ^"";// if there is a command that not have , or comments.
      
 }
+public stringIsCommand(str){
+    if (stringNotEmpty(str)&&stringIsNotComment(str))
+    {
+        ^ true;
+    };
+    ^false;
+ }
+public stringIsNotComment(str){
+ var bm := new StringBookmark(str);
+ if(bm.find("//")){^false;};
+^true;
 
+}
+public putCommandIndex(indexCommand,asmCommands){
+  string fixedAsm := asmCommands.replace("$i",indexCommand.toString());
+  ^fixedAsm;
+}
 public ifVmCommandIsBiggerThanOneWord(vmCommand){
 
 var partition := " ";
@@ -89,13 +115,22 @@ var vmArray := getArrayFromStringWithPartition(vmCommand,partition);
 ^vmArray.Length > 1;
 }
 public fixedVmThreeWord(vmCommand){
+    if(vmCommandNeedFixed(vmCommand)){
 var partition := " ";
 var vmArray := getArrayFromStringWithPartition(vmCommand,partition);
 string vmFixed := vmArray[0].toString() + " " + vmArray[1].toString();
 ^vmFixed;
+    };
+^vmCommand;
+}
+public vmCommandNeedFixed(vmCommand){
+if(vmCommand != "pop pointer 1" && vmCommand != "push pointer 1" &&vmCommand != "push pointer 0"  && vmCommand != "pop pointer 0")
+{
+    ^true;
+};
+^false;
 
 }
-
 public giveVmCommandWitoutNewLineProblem(vmCommand){
                  
  wide newLineSymbol := forward newLine;
@@ -107,7 +142,7 @@ public addAsmCommandsOutPutIfNeed(asmCommandsInConvertFileInCorrentLine,vmComman
 string partition := " ";
 var vmCommandArray := getArrayFromStringWithPartition(vmCommand,partition);
 string newAsmCommandsFixed;
-if(checkIfSizeOfArrayIsEqualToThree(vmCommandArray)== true)
+if(checkIfSizeOfArrayIsBiggerThanOne(vmCommandArray)== true)
     {
        newAsmCommandsFixed := asmCommandsReplace(asmCommandsInConvertFileInCorrentLine,vmCommandArray[2].toString(),fileName);
        ^newAsmCommandsFixed;
@@ -127,9 +162,9 @@ public asmCommandsReplace(strNeedChange,changeInCommand,fileName){
 
 
 
-public checkIfSizeOfArrayIsEqualToThree(array){
+public checkIfSizeOfArrayIsBiggerThanOne(array){
 //    if(array.Length
-    ^array.Length == 3;
+    ^array.Length > 1;
 
 }
 public writeAsmsCommandsToFile(fileAsmName,asmCommands){
@@ -144,11 +179,11 @@ public writeAsmsCommandsToFile(fileAsmName,asmCommands){
 
 
 
-writeTheArrayAsmToTheFile(asmArray,fileAsmName){
+public writeTheArrayAsmToTheFile(asmArray,fileAsmName){
     var numOfMulti;
        asmArray.forEach:(item){
-       numOfMulti := checkIfMultiIsInTheStringIfNoReturn1ElseReturnNumberMulti(item);   
-      if(numOfMulti>1){
+      if(ifHaveMulti(item)){
+              numOfMulti := getNumOfMulti(item);   
       string itemFixed := getTheFixedCommandWithoutMulti(item);
     writeToFileXTimes(fileAsmName,itemFixed,numOfMulti);
    }
@@ -166,13 +201,19 @@ public getTheFixedCommandWithoutMulti(str){
      };
      ^str;
 }
-public checkIfMultiIsInTheStringIfNoReturn1ElseReturnNumberMulti(str){
+public ifHaveMulti(str){
     string partition := "*";
     var arrayCheck := getArrayFromStringWithPartition(str,partition);
     if(arrayCheck.Length >1){
-     ^stringToInt(arrayCheck[1].toString());
+     ^true;
      };
-     ^1;
+     ^false;
+}
+public getNumOfMulti(str){
+    string partition := "*";
+    var arrayCheck := getArrayFromStringWithPartition(str,partition);
+     ^stringToInt(arrayCheck[1].toString());
+
 
 }
 public stringToInt(str){
@@ -209,6 +250,11 @@ writer.writeLine(dataToWrite);
 }
 public retFileName(){
     print("please write your file name include the path:");
+ ^ console.readLine();
+}
+
+public getDir(){
+    print("please write your path:");
  ^ console.readLine();
 }
 public newFileAsmName(fileName){   
@@ -289,7 +335,7 @@ public getCorrectAsmCommandFromVmToAsmOneWordArray11111(vmCommand,vmToAsmArray){
 }
 
 public getCorrectAsmCommandFromVmToAsmOneWordFile(vmCommand){
-  var fileVmToAsmOneWordName := "C:\Dan\studies programs\elena\elena-4.0.2e.i386-win\tar\tar1\dir\vmToAsmOne.txt";
+  var fileVmToAsmOneWordName := dir.Value+"vmToAsmOne.txt";
         
     using(auto reader := File.assign(fileVmToAsmOneWordName).textreader())
     {

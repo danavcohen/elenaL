@@ -1,0 +1,3 @@
+add%a=d^b=a^c=a
+sub%a=b
+push static%a=b*6^$C
