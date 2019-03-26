@@ -78,8 +78,8 @@ public getCorrectAsmCommandFromVmToAsmOneWordArray(vmCommand,vmToAsmArray,fileNa
             var asmCommandsInConvertFileInCorrentLine := arrayOfTheConvertFile[1].toString();
             string asmCommandsLineAsmFixed :=asmCommandsInConvertFileInCorrentLine; //if not need fixed
              if(ifVmCommandIsBiggerThanOneWord(vmCommandInConvertFileInCorrentLine)){
-               asmCommandsLineAsmFixed := addAsmCommandsOutPutIfNeed(asmCommandsInConvertFileInCorrentLine,vmCommandFixedNewLine,fileNameOnly);
-               vmCommandFixedNewLine := fixedVmThreeWord(vmCommandFixedNewLine);
+               asmCommandsLineAsmFixed := addAsmCommandsOutPutIfNeed(asmCommandsInConvertFileInCorrentLine,vmCommandFixedNewLine,fileNameOnly);////for example if push arguments 10 put 10 to the current asm commands
+               vmCommandFixedNewLine := fixedVmThreeWord(vmCommandFixedNewLine);//for example if push arguments 10 delete 10 to compare below.
               };  
              if(vmCommandInConvertFileInCorrentLine == vmCommandFixedNewLine)
              {
