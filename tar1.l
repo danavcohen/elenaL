@@ -34,7 +34,7 @@ public vmToAsm(vmFileName){
      var fileNameVmToAsmConverter := dir.Value+"\vmToAsmOne.txt";
     var vmToAsmArray := fileVmAsmToArray(fileNameVmToAsmConverter);
     var indexCommand :=0;
-    using(auto reader := File.assign(vmFileName).textreader())
+    using(auto reader := File.assign(vmFileName).textreader())//loop in vmFile
     {
           // repeating until all the lines are read 
         while (reader.Available)
